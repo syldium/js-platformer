@@ -1,0 +1,24 @@
+{
+  "name": "js-platformer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "author": {
+      "name": "syldium"
+  },
+  "repository": "https://github.com/syldium/js-platformer",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.9.0",
+    "babel-jest": "^25.2.4",
+    "jest": "^25.2.4",
+    "@types/jest": "^25.1.4"
+  }
+}
