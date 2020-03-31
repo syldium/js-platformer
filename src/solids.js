@@ -93,7 +93,7 @@ export class Player extends Positionnable
     }
 }
 
-export class Plateform extends Positionnable
+export class Platform extends Positionnable
 {
     draw(ctx, cameraPos)
     {

@@ -1,4 +1,4 @@
-import { Player, Plateform } from "./solids.js";
+import { Player, Platform } from "./solids.js";
 
 export const ResolveSolution = {
     X: 1,
@@ -26,7 +26,7 @@ export function isCollides(a, b)
  * Checks if the player collides with the platform vertically.
  * 
  * @param {Player} player 
- * @param {Plateform} platform 
+ * @param {Platform} platform 
  */
 export function isPlayerCollidesVertically(player, platform)
 {
@@ -46,7 +46,7 @@ export function isPlayerCollidesVertically(player, platform)
  * Checks if the player collides with the platform horizontally.
  * 
  * @param {Player} player 
- * @param {Plateform} platform 
+ * @param {Platform} platform 
  */
 export function isPlayerCollidesHorizontally(player, platform)
 {

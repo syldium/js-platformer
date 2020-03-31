@@ -1,5 +1,6 @@
 import { Player } from "./solids.js";
 import { isPlayerCollidesVertically, resolve, ResolveSolution, isPlayerCollidesHorizontally } from "./collisions.js";
+import { fillText } from "./draw.js";
 
 export class Scene 
 {
@@ -46,6 +47,11 @@ export class Scene
     render(ctx)
     {
         this.elements.forEach(el => el.draw(ctx, this.cameraPos));
+    }
+
+    addIndicator(ctx, text, x, y)
+    {
+        fillText(ctx, x, y, text, 'top', 'right');
     }
 
     updatePositions(elapsed)
