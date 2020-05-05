@@ -1,25 +1,27 @@
-import { Player } from "./solids.js";
+import { Positionnable, Player, Platform } from "./solids.js";
 import { isPlayerCollidesVertically, resolve, ResolveSolution, isPlayerCollidesHorizontally } from "./collisions.js";
 import { fillText } from "./draw.js";
 
 export class Scene 
 {
     /**
-     * @param {...Positionnable} elements 
+     * @param {number} spawnPoint
+     * @param {...Chunk} chunks 
      */
-    constructor(...elements)
+    constructor({x, y}, ...chunks)
     {
-        this.elements = elements;
+        chunks[0].elements.push(new Player(x, y));
+        this.chunks = chunks;
         this.cameraPos = 0;
     }
 
     checkCollisions()
     {
-        this.elements
+        this.chunks[0].elements
             .filter(el => el instanceof Player)
             .forEach(player => {
                 player.onGround = false;
-                this.elements.forEach(el => {
+                this.chunks[0].elements.forEach(el => {
                     if (el !== player) {
                         const c = isPlayerCollidesVertically(player, el);
                         if (c) {
@@ -40,13 +42,12 @@ export class Scene
      */
     player()
     {
-        return this.elements.find(el => el instanceof Player);
+        return this.chunks[0].elements.find(el => el instanceof Player);
     }
-
 
     render(ctx)
     {
-        this.elements.forEach(el => el.draw(ctx, this.cameraPos));
+        this.chunks[0].elements.forEach(el => { el.draw(ctx, this.cameraPos)});
     }
 
     addIndicator(ctx, text, x, y)
@@ -56,14 +57,14 @@ export class Scene
 
     updatePositions(elapsed)
     {
-        this.elements
+        this.chunks[0].elements
             .filter(el => el instanceof Player)
             .forEach(player => player.updatePosition(elapsed));
     }
 
     updateCameraPosition(screenWidth)
     {
-        this.elements
+        this.chunks[0].elements
             .filter(el => el instanceof Player)
             .forEach(player => {
                 if (player.x - this.cameraPos > screenWidth - 150) {
@@ -72,5 +73,37 @@ export class Scene
                     this.cameraPos -= this.cameraPos - player.x + 30;
                 }
             });
+    }
+
+    /**
+     * @param {Chunk} chunk
+     */
+    addChunk(chunk)
+    {
+        this.chunks.push(chunk);
+    }
+}
+
+export class Chunk
+{
+    /**
+     * @param {number} id
+     * @param {object} data
+     */
+    constructor(id, data)
+    {
+        this.id = id;
+        /** @var Platform[] */
+        this.elements = data.map(el => new Platform(el.x, el.y, el.width, 25));
+        this.start = Math.min(...this.elements.map(p => p.x));
+        this.end = Math.max(...this.elements.map(p => p.x + p.width));
+    }
+
+    /**
+     * @param {Positionnable} el 
+     */
+    add(el)
+    {
+        this.elements.push(el);
     }
 }

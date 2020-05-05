@@ -1,7 +1,7 @@
 import { fillRect } from "./draw.js";
 import { PLAYER_WALK_ACCELERATION, PLAYER_WALK_SPEED, PLAYER_JUMP_SPEED, FRICTION, GRAVITY } from "./constants.js";
 
-class Positionnable
+export class Positionnable
 {
     /**
      * @param {number} x 

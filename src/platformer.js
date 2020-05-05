@@ -1,22 +1,34 @@
-import { Scene } from "./scene.js";
-import { Player, Platform } from "./solids.js";
+import { Scene, Chunk } from "./scene.js";
 
 export class Platformer
 {
     /**
+     * @param {HTMLElement} menu
      * @param {HTMLCanvasElement} canvas 
      */
-    constructor(canvas)
+    constructor(menu, canvas)
     {
+        this.menu = menu;
+        this.canvas = canvas;
         this.height = canvas.height;
         this.width = canvas.width;
         this.ctx = canvas.getContext('2d');
+        this.levels = [];
 
-        this.scene = new Scene(new Player(40, 0), new Platform(0, 275, 300, 25), new Platform(350, 200, 100, 25), new Platform(400, 275, 400, 25), new Platform(700, 120, 300, 25), new Platform(850, 275, 200, 25), new Platform(1000, 200, 100, 25));
-        this.player = this.scene.player();
         this.timestamp = 0;
+        this.start = 0;
+        this.ingame = false;
 
         this.addListeners(canvas);
+        this.bindLevels();
+    }
+
+    get player()
+    {
+        if (typeof this._player === 'undefined' && typeof this.scene !== 'undefined') {
+            this._player = this.scene.player();
+        }
+        return this._player;
     }
 
     addListeners()
@@ -29,6 +41,9 @@ export class Platformer
             }
             if (e.code == 'Space') {
                 this.player.jump();
+            }
+            if (e.code == 'Escape') {
+                this.setInGame(false);
             }
         }, false);
         document.addEventListener('keyup', (e) => {
@@ -48,6 +63,8 @@ export class Platformer
      */
     tick(timestamp = 0)
     {
+        if (!this.ingame) return;
+
         this.scene.updatePositions((timestamp - this.timestamp) / 1000);
         this.scene.checkCollisions();
         this.scene.updateCameraPosition(this.width);
@@ -60,8 +77,63 @@ export class Platformer
 
         this.ctx.clearRect(0, 0, this.width, this.height);
         this.scene.render(this.ctx);
-        this.scene.addIndicator(this.ctx, (timestamp / 1000).toFixed(1), this.width - 10, 10);
+        this.scene.addIndicator(this.ctx, ((timestamp - this.start) / 1000).toFixed(1), this.width - 10, 10);
         this.timestamp = timestamp;
-        requestAnimationFrame(this.tick.bind(this));
+        if (this.ingame)
+            requestAnimationFrame(this.tick.bind(this));
+    }
+
+    /**
+     * Make level menu clickable.
+     */
+    bindLevels()
+    {
+        document.querySelectorAll('.levels li').forEach(li => {
+            const name = li.firstChild.getAttribute('href').substring(1);
+            li.addEventListener('click', event => {
+                event.preventDefault();
+                this.loadLevel(`levels/${name}.json`).then(level => {
+                    this.scene = level;
+                    this.setInGame(true);
+                });
+            })
+        });
+    }
+
+    /**
+     * Load a level from a .json file. If the file is already fetched, the scene will not be recreated.
+     * 
+     * @param {string} levelname 
+     * @returns {Promise<Scene>}
+     */
+    async loadLevel(levelname)
+    {
+        if (levelname in this.levels) {
+            return new Promise((resolve) => resolve(this.levels[levelname]));
+        }
+
+        const map = await fetch(levelname).then(res => res.json());
+
+        const chunks = map.chunks.map((chunk, id) => new Chunk(id, chunk));
+        const scene = new Scene(map.spawnpoint, ...chunks);
+        this.levels[levelname] = scene;
+        return scene;
+    }
+
+    /**
+     * @param {number} state 
+     */
+    setInGame(state)
+    {
+        if (state) {
+            this.menu.classList.add('invisible');
+            this.canvas.classList.remove('invisible');
+            this.start = performance.now();
+        } else {
+            this.menu.classList.remove('invisible');
+            this.canvas.classList.add('invisible');
+        }
+        this.ingame = state;
+        this.tick();
     }
 }

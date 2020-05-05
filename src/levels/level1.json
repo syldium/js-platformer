@@ -1,0 +1,46 @@
+{
+    "spawnpoint": {
+        "x": 40,
+        "y": 0
+    },
+    "chunks": [
+        [
+            {
+                "type": "platform",
+                "x": 0,
+                "y": 275,
+                "width": 300
+            },
+            {
+                "type": "platform",
+                "x": 350,
+                "y": 200,
+                "width": 100
+            },
+            {
+                "type": "platform",
+                "x": 400,
+                "y": 275,
+                "width": 400
+            },
+            {
+                "type": "platform",
+                "x": 700,
+                "y": 120,
+                "width": 300
+            },
+            {
+                "type": "platform",
+                "x": 850,
+                "y": 275,
+                "width": 200
+            },
+            {
+                "type": "platform",
+                "x": 1000,
+                "y": 200,
+                "width": 100
+            }
+        ]
+    ]
+}
