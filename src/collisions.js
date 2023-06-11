@@ -75,7 +75,7 @@ export function resolve(movable, fixed, direction = ResolveSolution.X)
     } else if (direction === ResolveSolution.Y) {
         const fixedCenter = fixed.y + fixed.height/2;
         if (movable.prevY + movable.height < fixedCenter) {
-            movable.y -= movable.y + movable.height - fixed.y;
+            movable.y = fixed.y - movable.height;
         } else {
             movable.y -= movable.y - fixed.y - fixed.height;
             movable.velY = -movable.velY * 0.01;
